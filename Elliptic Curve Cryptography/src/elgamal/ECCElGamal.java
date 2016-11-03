@@ -16,7 +16,8 @@ public class ECCElGamal {
     String plaintext;
     String ciphertext;
     BigInteger privateKey;
-    BigInteger publicKey;
+    BigInteger randomKey;
+    Point publicKey;
     EllipticCurve curve;
     Point basis;
     
@@ -24,18 +25,20 @@ public class ECCElGamal {
         plaintext = new String();
         ciphertext = new String();
         privateKey = new BigInteger("0");
-        publicKey = new BigInteger("0");
+        randomKey = new BigInteger("0");
         basis = new Point();
         curve = new EllipticCurve();
+        publicKey = new Point();
     }
     
-    public ECCElGamal(String plain, String cipher, BigInteger a, BigInteger k, Point b, EllipticCurve c) {
+    public ECCElGamal(String plain, String cipher, BigInteger a, BigInteger k, Point b, EllipticCurve c, Point p) {
         plaintext = plain;
         ciphertext = cipher;
         privateKey = a;
-        publicKey = k;
+        randomKey = k;
         basis = b;
         curve = c;
+        publicKey = p;
     }
     
     public Point makePoint(){
@@ -46,15 +49,21 @@ public class ECCElGamal {
     
     public void encrypt() throws IOException {
         Point init = makePoint();
-        Point cipherX = basis.multiply(publicKey, curve.getMod(), curve.getCurve()[2]);
-        Point publicPoint = basis.multiply(privateKey, curve.getMod(), curve.getCurve()[2]);
-        Point cipherY = init.plus(publicPoint.multiply(publicKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
+        Point cipherX = basis.multiply(randomKey, curve.getMod(), curve.getCurve()[2]);
+        Point cipherY = init.plus(publicKey.multiply(randomKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
         
         ciphertext = cipherX.getX().toString() + "\n" +  cipherX.getY().toString() + "\n" + cipherY.getX().toString() + "\n" + cipherY.getY().toString();
 
     }
     
     public void decrypt(){
+        String[] ciphers = ciphertext.split("\n", 4);
+
+        Point cipherX = new Point(new BigInteger(ciphers[0]), new BigInteger(ciphers[1]));
+        Point cipherY = new Point(new BigInteger(ciphers[2]), new BigInteger(ciphers[3]));
+        
+        Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
+        System.out.println(plainPoint.getX().toString());
         
     }
     
