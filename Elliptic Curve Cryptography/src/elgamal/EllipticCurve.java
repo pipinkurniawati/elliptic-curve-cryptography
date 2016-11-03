@@ -32,7 +32,7 @@ public class EllipticCurve {
     public BigInteger calculateY(BigInteger x){
         BigInteger result = new BigInteger("0");
         for(int i=0; i<curve.length; i++){
-            result.add(curve[i].multiply(x.pow(i)));
+            result = result.add(curve[i].multiply(x.pow(i)));
         }
         return result.mod(modulus);
     }

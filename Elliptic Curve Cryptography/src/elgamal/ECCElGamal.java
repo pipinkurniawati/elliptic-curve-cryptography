@@ -49,8 +49,8 @@ public class ECCElGamal {
     
     public void encrypt() throws IOException {
         Point init = makePoint();
-        Point cipherX = basis.multiply(randomKey, curve.getMod(), curve.getCurve()[2]);
-        Point cipherY = init.plus(publicKey.multiply(randomKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
+        Point cipherX = basis.multiply(randomKey, curve.getMod(), curve.getCurve()[1]);
+        Point cipherY = init.plus(publicKey.multiply(randomKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
         
         ciphertext = cipherX.getX().toString() + "\n" +  cipherX.getY().toString() + "\n" + cipherY.getX().toString() + "\n" + cipherY.getY().toString();
 
@@ -62,7 +62,7 @@ public class ECCElGamal {
         Point cipherX = new Point(new BigInteger(ciphers[0]), new BigInteger(ciphers[1]));
         Point cipherY = new Point(new BigInteger(ciphers[2]), new BigInteger(ciphers[3]));
         
-        Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
+        Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
         System.out.println(plainPoint.getX().toString());
         
     }
