@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +23,7 @@ import java.util.logging.Logger;
  */
 public class IOFile {
     private String filename;
+    private String data;
     
     public IOFile(String filename) {
         this.filename = filename;
@@ -32,8 +35,22 @@ public class IOFile {
         try {
             byte[] bytes = Files.readAllBytes(path);
             result = new String(bytes);
+            this.data = result;
         } catch (IOException ex) {
             Logger.getLogger(IOFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public List<String> getDataSegment() {
+        readFile();
+        List<String> result = new ArrayList<String>();
+        for (int i=0; i<data.length(); i+=3) {
+            if (data.length() < i+3) {
+                result.add(data.substring(i));
+            } else {
+                result.add(data.substring(i, i+3));
+            }
         }
         return result;
     }
@@ -49,5 +66,9 @@ public class IOFile {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(IOFile.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public String getData() {
+        return data;
     }
 }

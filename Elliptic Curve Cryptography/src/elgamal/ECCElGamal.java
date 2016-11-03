@@ -7,19 +7,22 @@ package elgamal;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author zulvafachrina
  */
 public class ECCElGamal {
-    String plaintext;
-    String ciphertext;
-    BigInteger privateKey;
-    BigInteger randomKey;
-    Point publicKey;
-    EllipticCurve curve;
-    Point basis;
+    private String plaintext;
+    private String ciphertext;
+    private BigInteger privateKey;
+    private BigInteger randomKey;
+    private Point publicKey;
+    private EllipticCurve curve;
+    private Point basis;
+    private List<BigInteger> decryptionPoints;
     
     public ECCElGamal(){
         plaintext = new String();
@@ -52,19 +55,26 @@ public class ECCElGamal {
         Point cipherX = basis.multiply(randomKey, curve.getMod(), curve.getCurve()[1]);
         Point cipherY = init.plus(publicKey.multiply(randomKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
         
-        ciphertext = cipherX.getX().toString() + "\n" +  cipherX.getY().toString() + "\n" + cipherY.getX().toString() + "\n" + cipherY.getY().toString();
-
+        ciphertext = cipherX.getX().toString() + " " +  cipherX.getY().toString() + " " + cipherY.getX().toString() + " " + cipherY.getY().toString() +" ";
     }
     
     public void decrypt(){
-        String[] ciphers = ciphertext.split("\n", 4);
-
-        Point cipherX = new Point(new BigInteger(ciphers[0]), new BigInteger(ciphers[1]));
-        Point cipherY = new Point(new BigInteger(ciphers[2]), new BigInteger(ciphers[3]));
-        
-        Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
-        System.out.println(plainPoint.getX().toString());
-        
+        String[] ciphers = ciphertext.split(" ");
+        decryptionPoints = new ArrayList<BigInteger>();
+        for (int i=0; i<ciphers.length; i+=4) {
+            Point cipherX = new Point(new BigInteger(ciphers[i]), new BigInteger(ciphers[i+1]));
+            Point cipherY = new Point(new BigInteger(ciphers[i+2]), new BigInteger(ciphers[i+3]));
+            Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
+            decryptionPoints.add(plainPoint.getX());
+        }      
+    }
+    
+    public String bigIntToString() {
+        StringBuilder stringbuff = new StringBuilder();
+        for (int i=0; i<decryptionPoints.size(); i++) {
+            stringbuff.append(new String (decryptionPoints.get(i).toByteArray()));
+        }
+        return stringbuff.toString();
     }
     
     public String getPlaintext(){
