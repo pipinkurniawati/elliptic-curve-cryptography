@@ -55,15 +55,15 @@ public class ECCElGamal {
         Point cipherX = basis.multiply(randomKey, curve.getMod(), curve.getCurve()[1]);
         Point cipherY = init.plus(publicKey.multiply(randomKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
         
-        ciphertext = cipherX.getX().toString() + " " +  cipherX.getY().toString() + " " + cipherY.getX().toString() + " " + cipherY.getY().toString() +" ";
+        ciphertext = cipherX.getX().toString(16).toUpperCase() + " " +  cipherX.getY().toString(16).toUpperCase() + " " + cipherY.getX().toString(16).toUpperCase() + " " + cipherY.getY().toString(16).toUpperCase() +" ";
     }
     
     public void decrypt(){
         String[] ciphers = ciphertext.split(" ");
         decryptionPoints = new ArrayList<BigInteger>();
         for (int i=0; i<ciphers.length; i+=4) {
-            Point cipherX = new Point(new BigInteger(ciphers[i]), new BigInteger(ciphers[i+1]));
-            Point cipherY = new Point(new BigInteger(ciphers[i+2]), new BigInteger(ciphers[i+3]));
+            Point cipherX = new Point(new BigInteger(ciphers[i],16), new BigInteger(ciphers[i+1],16));
+            Point cipherY = new Point(new BigInteger(ciphers[i+2],16), new BigInteger(ciphers[i+3],16));
             Point plainPoint = cipherY.minus(cipherX.multiply(privateKey, curve.getMod(), curve.getCurve()[1]), curve.getMod(), curve.getCurve()[1]);
             decryptionPoints.add(plainPoint.getX());
         }      
