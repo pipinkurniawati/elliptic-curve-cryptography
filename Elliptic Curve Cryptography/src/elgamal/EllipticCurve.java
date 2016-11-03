@@ -36,4 +36,13 @@ public class EllipticCurve {
         }
         return result.mod(modulus);
     }
+    
+    public BigInteger getMod(){
+        return modulus;
+    }
+    
+    public BigInteger[] getCurve(){
+        return curve;
+    }
+    
 }

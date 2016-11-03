@@ -13,16 +13,17 @@ import java.math.BigInteger;
  */
 public class Main {
     public static void main(String[] args){
-        Point P = new Point(new BigInteger("2"), new BigInteger("4"));
-        Point Q = new Point(new BigInteger("5"), new BigInteger("9"));
-        Point R = P.plus(Q, new BigInteger("11"), new BigInteger("1"));
-        System.out.println("Hasil Tambah -- x: " + R.getX() + " y:" + R.getY());
         
-        R =P.plus(P, new BigInteger("11"), new BigInteger("1"));
-        R = R.plus(P,  new BigInteger("11"), new BigInteger("1"));
-        System.out.println("Hasil Tambah -- 4: " + R.getX() + " y:" + R.getY());
+        IOFile file = new IOFile("data/plaintext.txt");
         
-        R = P.multiply(new BigInteger("12"),new BigInteger("11"), new BigInteger("1"));
-        System.out.println("Hasil Kali -- x: " + R.getX() + " y:" + R.getY());
+        System.out.println("Plaintext");
+        System.out.println(new BigInteger(file.readFile().getBytes()));
+        
+        EllipticCurve curve = new EllipticCurve(new BigInteger("2"), new BigInteger("1"), new BigInteger("32416190071"));
+        BigInteger privateKey = new BigInteger("13456789");
+        BigInteger randomKey = new BigInteger("99");
+        Point basis = new Point(new BigInteger("1"), new BigInteger("0"));
+        ECCElGamal encryption = new ECCElGamal(file.readFile(), "", privateKey, randomKey, basis, curve);
+        encryption.encrypt();
     }
 }

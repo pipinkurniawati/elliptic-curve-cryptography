@@ -41,11 +41,19 @@ public class Point {
         Point r = new Point();
         
         if(point.x == x && point.y == y) {
+            if(y.multiply(new BigInteger("2")).equals(new BigInteger("0"))){
+                return new Point(new BigInteger("-1"), new BigInteger("-1"));
+            }
+            
             BigInteger m = gradien2(p, a);
             r.x = m.pow(2).subtract(x.multiply(new BigInteger("2"))).mod(p);
             r.y = m.multiply(x.subtract(r.x)).subtract(y).mod(p);
         }       
         else {
+            if(x.subtract(point.x).equals(new BigInteger("0"))){
+                return new Point(new BigInteger("-1"), new BigInteger("-1"));
+            }
+            
             BigInteger m = gradien1(point, p);
             r.x = m.pow(2).subtract(x).subtract(point.x).mod(p);
             r.y = m.multiply(x.subtract(r.x)).subtract(y).mod(p);        
