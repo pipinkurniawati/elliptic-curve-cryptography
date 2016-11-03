@@ -5,6 +5,7 @@
  */
 package elgamal;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Scanner;
  * @author zulvafachrina
  */
 public class Main {
+    private static long startTime, endTime;
     public static void main(String[] args) throws IOException{
         EllipticCurve curve = new EllipticCurve(new BigInteger("2"), new BigInteger("1"), new BigInteger("32416190071"));
         
@@ -29,6 +31,7 @@ public class Main {
         Point publicKey1 = basis.multiply(privateKey2, new BigInteger("32416190071"), new BigInteger("2"));
         Point publicKey2 = basis.multiply(privateKey1, new BigInteger("32416190071"), new BigInteger("2"));
         
+        File output;
         Scanner scanner = new Scanner(System.in);
         displayMenu();
         String choice = scanner.nextLine();
@@ -45,17 +48,23 @@ public class Main {
                     System.out.println(file.getData()); 
                     ECCElGamal encryption = new ECCElGamal();
                     String result = new String();
+                    startTime = System.currentTimeMillis();
                     for (int i=0; i<blocks.size(); i++) {
                         encryption = new ECCElGamal(blocks.get(i), "", privateKey1, randomKey, basis, curve, publicKey1);  
                         encryption.encrypt();
                         result += encryption.getCiphertext();
                     }
+                    endTime = System.currentTimeMillis();
                     System.out.println("\n------- CipherText -------");
                     System.out.println(result);
+                    System.out.println("\nRunning time: " + (endTime-startTime) + " milisecond");
                     System.out.print("\nSave the result to : ");
                     String outfile = scanner.nextLine(); 
                     file = new IOFile(outfile);
                     System.out.println("Saving the result...");
+                    output = new File(outfile);
+                    double kilobytes = ( output.length() / 1024);
+                    System.out.println("Done saving. File size: "+ kilobytes + " kilobytes");
                     file.writeFile(result);
                     break;
                 case "2":
@@ -65,14 +74,20 @@ public class Main {
                     System.out.println();
                     file = new IOFile(infile);
                     ECCElGamal decryption = new ECCElGamal("", file.readFile(), privateKey2, randomKey, basis, curve, publicKey2);
+                    startTime = System.currentTimeMillis();
                     decryption.decrypt();
+                    endTime = System.currentTimeMillis();
                     System.out.println("\n------- Plaintext -------");
                     System.out.println(decryption.bigIntToString());
+                    System.out.println("\nRunning time: " + (endTime-startTime) + " milisecond");
                     System.out.print("\nSave the result to : ");
+                    file.writeFile(decryption.bigIntToString());
                     outfile = scanner.nextLine(); 
                     file = new IOFile(outfile);
                     System.out.println("Saving the result...");
-                    file.writeFile(decryption.bigIntToString());
+                    output = new File(outfile);
+                    double kb = (output.length() / 1024);
+                    System.out.println("Done saving. File size: "+ kb + " kilobytes");
                     break;
                 default:
                     System.out.println("Your input is not recognizable");
