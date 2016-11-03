@@ -5,6 +5,7 @@
  */
 package elgamal;
 
+import java.io.IOException;
 import java.math.BigInteger;
 
 /**
@@ -43,18 +44,14 @@ public class ECCElGamal {
         return new Point(x,y);
     }
     
-    public void encrypt() {
+    public void encrypt() throws IOException {
         Point init = makePoint();
         Point cipherX = basis.multiply(publicKey, curve.getMod(), curve.getCurve()[2]);
         Point publicPoint = basis.multiply(privateKey, curve.getMod(), curve.getCurve()[2]);
         Point cipherY = init.plus(publicPoint.multiply(publicKey, curve.getMod(), curve.getCurve()[2]), curve.getMod(), curve.getCurve()[2]);
         
-        System.out.println("------- Enkripsi -------");
-        System.out.println("CipherText");
-        System.out.println("Point 1 ");
-        System.out.println("x: " + cipherX.getX() + " y: " + cipherX.getY());
-        System.out.println("Point 2 ");
-        System.out.println("x: " + cipherY.getX() + " y: " + cipherY.getY());
+        ciphertext = cipherX.getX().toString() + "\n" +  cipherX.getY().toString() + "\n" + cipherY.getX().toString() + "\n" + cipherY.getY().toString();
+
     }
     
     public void decrypt(){
