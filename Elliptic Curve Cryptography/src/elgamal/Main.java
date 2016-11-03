@@ -11,31 +11,26 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author zulvafachrina
  */
 public class Main {
+    private static BigInteger privateKey1, privateKey2, randomKey;
+    private static Point publicKey1, publicKey2, basis;
     private static long startTime, endTime;
     public static void main(String[] args) throws IOException{
         EllipticCurve curve = new EllipticCurve(new BigInteger("2"), new BigInteger("1"), new BigInteger("32416190071"));
-        
-        BigInteger privateKey1 = new BigInteger("13456789");
-        BigInteger privateKey2 = new BigInteger("23456789");
-        
-        BigInteger randomKey = new BigInteger("99");
-        
-        Point basis = new Point(new BigInteger("0"), curve.calculateY(new BigInteger("0"))); 
-
-        Point publicKey1 = basis.multiply(privateKey2, new BigInteger("32416190071"), new BigInteger("2"));
-        Point publicKey2 = basis.multiply(privateKey1, new BigInteger("32416190071"), new BigInteger("2"));
+        buildKey("23456789", "0", curve);
         
         File output;
         Scanner scanner = new Scanner(System.in);
         displayMenu();
         String choice = scanner.nextLine();
-        while (!choice.equals("3")) {
+        while (!choice.equals("4")) {
             switch (choice) {
                 case "1":
                     System.out.println("\n********** Encryption **********\n");
@@ -89,6 +84,14 @@ public class Main {
                     double kb = (output.length() / 1024);
                     System.out.println("Done saving. File size: "+ kb + " kilobytes");
                     break;
+                case "3":
+                    System.out.print("Enter private key: ");
+                    String privkey = scanner.nextLine();
+                    System.out.print("Enter base value: ");
+                    String base = scanner.nextLine(); 
+                    System.out.println();
+                    System.out.println("Saving public key and private key");
+                    buildKey(privkey, base, curve);
                 default:
                     System.out.println("Your input is not recognizable");
                     break;
@@ -105,7 +108,26 @@ public class Main {
         System.out.println("CHOOSE COMMAND");
         System.out.println("1. Encrypt a Plaintext");
         System.out.println("2. Decrypt a Ciphertext");
-        System.out.println("3. Exit");
+        System.out.println("3. Build Key");
+        System.out.println("4. Exit");
         System.out.print("your input: ");
+    }
+    
+    public static void buildKey(String privKey2, String base, EllipticCurve curve) {
+        try {
+            privateKey1 = new BigInteger("13456789");
+            privateKey2 = new BigInteger(privKey2);
+            randomKey = new BigInteger("99");
+            basis = new Point(new BigInteger(base), curve.calculateY(new BigInteger("0")));
+            publicKey1 = basis.multiply(privateKey2, new BigInteger("32416190071"), new BigInteger("2"));
+            publicKey2 = basis.multiply(privateKey1, new BigInteger("32416190071"), new BigInteger("2"));
+            
+            IOFile privKey = new IOFile("key.pri");
+            IOFile pubKey = new IOFile("key.pub");
+            privKey.writeFile(privateKey1.toString());
+            pubKey.writeFile(publicKey1.toString() + "\n" + publicKey1.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
